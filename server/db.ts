@@ -2,7 +2,7 @@ import { neon } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-http';
 import { eq } from 'drizzle-orm';
 import * as schema from '../drizzle/schema';
-
+import bcrypt from 'bcryptjs';
 // Conexão Neon via HTTP — compatível com ambientes serverless (Netlify Functions)
 const sql = neon(process.env.DATABASE_URL!);
 export const db = drizzle(sql, { schema });
@@ -256,7 +256,6 @@ export async function createUser(data: {
   password: string;
   role: 'admin' | 'user';
 }) {
-  const bcrypt = await import('bcryptjs');
   const passwordHash = await bcrypt.hash(data.password, 12);
 
   const result = await db
@@ -292,7 +291,7 @@ export async function verifyUserPassword(
   const user = await findUserByEmail(email);
   if (!user) return null;
 
-  const bcrypt = await import('bcryptjs');
+
 
   // Suporte a usuários antigos (hash SHA-256 no openId) e novos (bcrypt no passwordHash)
   if (user.passwordHash) {
