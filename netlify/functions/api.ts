@@ -256,7 +256,7 @@ app.post('/api/admin/users', async (req, res) => {
     const result = await createUser(req.body);
     res.json({ success: true, data: result });
   } catch (error: any) {
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({ success: false, error: error.cause ? error.cause.message : error.message });
   }
 });
 
